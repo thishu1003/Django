@@ -1,0 +1,27 @@
+version: '3'
+services:
+  employee_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: employee_app_container
+    networks:
+      my_custom_network:
+        ipv4_address: 192.168.10.143  # The container's IP within the Docker network, if needed.
+    ports:
+      - "0.0.0.0:8000:8000"  # Bind to all network interfaces on port 82 (host) -> 8000 (container).
+    volumes:
+      - .:/app
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    command: ["gunicorn", "--bind", "0.0.0.0:8000", "employee_project.wsgi:application"]
+
+networks:
+  my_custom_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.10.0/24
+
+
